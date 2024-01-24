@@ -1,0 +1,78 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+  <nav class="navbar"  style="margin-top: 50px;" >
+    <a class="navbar-brand" href="#">Cadastro do pedido</a>
+  </nav>
+
+  <form class="row g-3">
+
+    <div class="col-2">
+      <label for="id_data" class="form-label" >Data da locação</label>
+      <input type="text" class="form-control" id="id_data" placeholder="00/00/0000">
+    </div>
+
+    <div class="col-md-0"></div>
+
+    <div class="col-8">
+      <label for="inputAddress" class="form-label">Nome</label>
+      <input type="text" class="form-control" id="inputAddress" placeholder="">
+    </div>
+
+    <div class="col-12">
+      <button type="submit" class="btn btn-secondary">Adicionar Produto</button>
+    </div>
+
+    <div class="col-md-0"></div>
+
+    <div class="col-12">
+      <button type="submit" class="btn btn-primary">Salvar</button>
+    </div>
+
+
+  </form>
+
+<script>
+    $(function() {
+        // Configurando o Datepicker em português
+        $.datepicker.setDefaults($.datepicker.regional['pt-BR']);
+
+        // Configurando o formato de data brasileiro
+        $.datepicker.setDefaults({
+            dateFormat: 'dd/mm/yy',
+            dayNamesMin: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+            monthNames: [
+                'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+            ]
+        });
+
+        // Inicializando o Datepicker
+        $("#id_data").datepicker();
+    });
+</script>
+
+
+<script>
+  function formatarDataNascimento(input) {
+    let dataNascimento = input.value.replace(/\D/g, ''); // Remove caracteres não numéricos
+
+    if (dataNascimento.length === 8) {
+      // Formato para data de nascimento (8 dígitos)
+      dataNascimento = dataNascimento.replace(/^(\d{2})(\d{2})(\d{4})$/, "$1/$2/$3");
+    }
+
+    input.value = dataNascimento;
+  }
+
+  // Adiciona um ouvinte de evento para formatar a data de nascimento quando o usuário digitar
+  document.getElementById('nasc').addEventListener('input', function() {
+    formatarDataNascimento(this);
+  });
+</script>
+
+
+{% endblock %}
