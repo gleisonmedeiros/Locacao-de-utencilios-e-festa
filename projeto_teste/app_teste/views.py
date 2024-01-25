@@ -27,6 +27,9 @@ def cadastro_cliente(request):
 def cadastro_pedido(request):
     return render(request, 'cadastro_pedido.html')
 
+def agenda(request):
+    return render(request, 'agenda.html')
+
 def cadastro_produto(request):
     if request.method == 'POST':
         form = ProdutoForm(request.POST)
