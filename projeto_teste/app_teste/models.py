@@ -17,3 +17,10 @@ class Cliente_Model(models.Model):
     numero = models.IntegerField()
     referencia = models.CharField(max_length=200)
 
+    def __str__(self):
+        return self.nome
+
+class Pedido_Model(models.Model):
+    nome = models.CharField(max_length=80)
+
+

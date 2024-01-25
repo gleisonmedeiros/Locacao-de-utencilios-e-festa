@@ -33,3 +33,6 @@ class ClienteForm(forms.ModelForm):
             'numero':'Número',
             'referencia':'Ponto de Referência'
         }
+
+class PedidoForm(forms.Form):
+    nome_cliente = forms.ModelChoiceField(queryset=Cliente_Model.objects.all())

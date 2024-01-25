@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .forms import ProdutoForm, ClienteForm
+from .forms import ProdutoForm, ClienteForm, PedidoForm
 
 def ola_mundo(request):
     return HttpResponse("Ola mundo!")
@@ -25,7 +25,8 @@ def cadastro_cliente(request):
 
 
 def cadastro_pedido(request):
-    return render(request, 'cadastro_pedido.html')
+    form = PedidoForm()
+    return render(request, 'cadastro_pedido.html', {'form': form})
 
 def agenda(request):
     return render(request, 'agenda.html')
@@ -44,4 +45,3 @@ def cadastro_produto(request):
     else:
         form = ProdutoForm()
     return render(request, 'cadastro_produto.html', {'form': form})
-
