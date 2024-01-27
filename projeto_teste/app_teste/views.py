@@ -25,7 +25,15 @@ def cadastro_cliente(request):
 
 
 def cadastro_pedido(request):
-    form = PedidoForm()
+    if request.method == 'POST':
+        form = PedidoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect(
+                'alguma_pagina_sucesso')  # Substitua 'alguma_pagina_sucesso' pela página desejada após o sucesso do pedido
+    else:
+        form = PedidoForm()
+
     return render(request, 'cadastro_pedido.html', {'form': form})
 
 def agenda(request):

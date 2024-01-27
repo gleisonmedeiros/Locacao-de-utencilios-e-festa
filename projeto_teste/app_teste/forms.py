@@ -1,5 +1,5 @@
 from django import forms
-from .models import Produto_Model, Cliente_Model
+from .models import Produto_Model, Cliente_Model, Pedido_Model
 
 class ProdutoForm(forms.ModelForm):
     class Meta:
@@ -34,5 +34,9 @@ class ClienteForm(forms.ModelForm):
             'referencia':'Ponto de Referência'
         }
 
-class PedidoForm(forms.Form):
-    nome_cliente = forms.ModelChoiceField(queryset=Cliente_Model.objects.all())
+class PedidoForm(forms.ModelForm):
+    class Meta:
+        model = Pedido_Model
+        fields = ['cliente', 'produtos', 'data_locacao','observacoes']
+        widgets = {
+            'data_locacao': forms.TextInput(attrs={'class': 'form-control', 'type': 'text','id':'id_data','placeholder': '00/00/0000'})}

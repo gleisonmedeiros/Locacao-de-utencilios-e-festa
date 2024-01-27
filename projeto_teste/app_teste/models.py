@@ -7,6 +7,10 @@ class Produto_Model(models.Model):
     modelo = models.CharField(max_length=80)
     quantidade = models.IntegerField()
 
+    def __str__(self):
+        return f'{self.nome} - {self.modelo}'
+
+
 class Cliente_Model(models.Model):
     nome = models.CharField(max_length=80)
     telefone = models.CharField(max_length=80)
@@ -21,6 +25,11 @@ class Cliente_Model(models.Model):
         return self.nome
 
 class Pedido_Model(models.Model):
-    nome = models.CharField(max_length=80)
+    cliente = models.ForeignKey(Cliente_Model, on_delete=models.CASCADE)
+    produtos = models.ManyToManyField(Produto_Model)
+    data_locacao = models.CharField(max_length=10, blank=True, null=True)
+    observacoes = models.TextField(blank=True)
+
+
 
 
