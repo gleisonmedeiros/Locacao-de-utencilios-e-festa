@@ -34,9 +34,15 @@ class ClienteForm(forms.ModelForm):
             'referencia':'Ponto de Referência'
         }
 
+
 class PedidoForm(forms.ModelForm):
     class Meta:
         model = Pedido_Model
-        fields = ['cliente', 'produtos', 'data_locacao','observacoes']
-        widgets = {
-            'data_locacao': forms.TextInput(attrs={'class': 'form-control', 'type': 'text','id':'id_data','placeholder': '00/00/0000'})}
+        fields = ['cliente', 'itens_pedido']  # Adicione outros campos conforme necessário
+
+    def __init__(self, *args, **kwargs):
+        super(PedidoForm, self).__init__(*args, **kwargs)
+        # Personalize widgets e rótulos, se necessário
+        self.fields['cliente'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Cliente'})
+        self.fields['itens_pedido'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Itens do Pedido'})
+        # Adicione widgets e rótulos para outros campos conforme necessário

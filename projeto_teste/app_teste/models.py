@@ -24,12 +24,18 @@ class Cliente_Model(models.Model):
     def __str__(self):
         return self.nome
 
+class ItemPedido(models.Model):
+    produto = models.ForeignKey(Produto_Model, on_delete=models.CASCADE)
+    quantidade_alugada = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.produto.nome} - {self.quantidade_alugada}"
+
 class Pedido_Model(models.Model):
     cliente = models.ForeignKey(Cliente_Model, on_delete=models.CASCADE)
-    produtos = models.ManyToManyField(Produto_Model)
-    data_locacao = models.CharField(max_length=10, blank=True, null=True)
-    observacoes = models.TextField(blank=True)
+    itens_pedido = models.ManyToManyField(ItemPedido)
 
-
+    def __str__(self):
+        return f"{self.cliente.nome}'s Pedido"
 
 
