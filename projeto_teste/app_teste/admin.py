@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Cliente_Model, Produto_Model, Pedido_Model
+from .models import Cliente_Model, Produto_Model, PedidoModel,ItemPedido
 
 # Register your models here.
 @admin.register(Cliente_Model)
@@ -10,7 +10,16 @@ class ClienteAdmin(admin.ModelAdmin):
 class ProdutoAdmin(admin.ModelAdmin):
     list_display = ['nome', 'modelo', 'quantidade']
 
-@admin.register(Pedido_Model)
+
+class ItemPedidoInline(admin.TabularInline):
+    model = ItemPedido
+
+
+@admin.register(PedidoModel)
 class PedidoAdmin(admin.ModelAdmin):
-    list_display = ['cliente', 'data_locacao', 'observacoes']
-    filter_horizontal = ['produtos']  # Isso torna o campo produtos mais amigável para múltipla escolha no admin
+    list_display = ('cliente',)
+    inlines = [ItemPedidoInline]
+
+@admin.register(ItemPedido)
+class ItemPedidoAdmin(admin.ModelAdmin):
+    list_display = ('produto', 'quantidade_alugada')

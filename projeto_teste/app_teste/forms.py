@@ -1,5 +1,5 @@
 from django import forms
-from .models import Produto_Model, Cliente_Model, Pedido_Model
+from .models import Produto_Model, Cliente_Model, PedidoModel, ItemPedido
 
 class ProdutoForm(forms.ModelForm):
     class Meta:
@@ -35,14 +35,21 @@ class ClienteForm(forms.ModelForm):
         }
 
 
-class PedidoForm(forms.ModelForm):
+class ItemPedidoForm(forms.ModelForm):
     class Meta:
-        model = Pedido_Model
-        fields = ['cliente', 'itens_pedido']  # Adicione outros campos conforme necessário
+        model = ItemPedido
+        fields = ['produto', 'quantidade_alugada']
 
-    def __init__(self, *args, **kwargs):
-        super(PedidoForm, self).__init__(*args, **kwargs)
-        # Personalize widgets e rótulos, se necessário
-        self.fields['cliente'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Cliente'})
-        self.fields['itens_pedido'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Itens do Pedido'})
-        # Adicione widgets e rótulos para outros campos conforme necessário
+class PedidoModelForm(forms.ModelForm):
+    itens_pedido = forms.inlineformset_factory(
+        PedidoModel,
+        ItemPedido,
+        form=ItemPedidoForm,
+        fields=['produto', 'quantidade_alugada'],
+        extra=1,  # Pode ajustar conforme necessário
+        can_delete=True,
+    )
+
+    class Meta:
+        model = PedidoModel
+        fields = ['cliente']        # Adicione widgets e rótuldos para outros campos conforme necessário

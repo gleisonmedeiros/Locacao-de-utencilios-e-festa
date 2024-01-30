@@ -8,29 +8,19 @@
     <a class="navbar-brand" href="#">Cadastro do pedido</a>
   </nav>
 
-  <form class="row g-3">
+ <form method="post">
+  {% csrf_token %}
 
+  {{ form.as_p }}
 
-    <div class="col-md-0"></div>
+  {% for formset in form.itens_pedido %}
+    {{ formset.as_p }}
+  {% endfor %}
 
-    <div class="col-8">
-      {% csrf_token %}
-      {{ form.as_p }}
-    </div>
+    <input type="submit" name="save_itens" value="Salvar Itens">
+  <input type="submit" name="save_pedido" value="Salvar Pedido">
+</form>
 
-
-    <div class="col-12">
-      <button type="submit" class="btn btn-secondary">Adicionar Produto</button>
-    </div>
-
-    <div class="col-md-0"></div>
-
-    <div class="col-12">
-      <button type="submit" class="btn btn-primary">Salvar</button>
-    </div>
-
-
-  </form>
 
 <script>
     $(function() {
