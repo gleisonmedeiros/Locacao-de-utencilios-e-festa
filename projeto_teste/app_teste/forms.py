@@ -41,15 +41,15 @@ class ItemPedidoForm(forms.ModelForm):
         fields = ['produto', 'quantidade_alugada']
 
 class PedidoModelForm(forms.ModelForm):
+    class Meta:
+        model = PedidoModel
+        fields = ['cliente']
+
     itens_pedido = forms.inlineformset_factory(
         PedidoModel,
         ItemPedido,
         form=ItemPedidoForm,
         fields=['produto', 'quantidade_alugada'],
-        extra=1,  # Pode ajustar conforme necessário
+        extra=1,
         can_delete=True,
     )
-
-    class Meta:
-        model = PedidoModel
-        fields = ['cliente']        # Adicione widgets e rótuldos para outros campos conforme necessário

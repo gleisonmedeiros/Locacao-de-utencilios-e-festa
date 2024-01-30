@@ -8,18 +8,20 @@
     <a class="navbar-brand" href="#">Cadastro do pedido</a>
   </nav>
 
- <form method="post">
+<form method="post">
   {% csrf_token %}
 
   {{ form.as_p }}
 
-  {% for formset in form.itens_pedido %}
-    {{ formset.as_p }}
+  {{ form.itens_pedido.management_form }}
+  {% for formset_form in form.itens_pedido.forms %}
+    {{ formset_form.as_table }}
   {% endfor %}
 
-    <input type="submit" name="save_itens" value="Salvar Itens">
+  <input type="submit" name="save_itens" value="Salvar Itens">
   <input type="submit" name="save_pedido" value="Salvar Pedido">
 </form>
+
 
 
 <script>
