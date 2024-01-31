@@ -26,7 +26,7 @@ class PedidoModel(models.Model):
     itens_pedido = models.ManyToManyField('ItemPedido',blank=True, null=True)  # Use aspas para evitar referência circular
 
     def __str__(self):
-        return f"{self.cliente.nome}'s Pedido"
+        return self.cliente.nome
 
 class ItemPedido(models.Model):
     produto = models.ForeignKey(Produto_Model, on_delete=models.CASCADE)

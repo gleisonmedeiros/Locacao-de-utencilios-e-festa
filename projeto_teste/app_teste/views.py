@@ -4,6 +4,8 @@ from .forms import ProdutoForm, ClienteForm, PedidoModelForm,ItemPedidoForm
 from .models import Cliente_Model, Produto_Model
 from .models import PedidoModel, ItemPedido
 
+lista2 = []
+
 
 def ola_mundo(request):
     return HttpResponse("Ola mundo!")
@@ -107,34 +109,68 @@ def cadastro_pedido(request):
 
     return render(request, 'cadastro_pedido.html', {'form': form})
 '''
+
+def salva_pedido():
+    # Criar uma instância do cliente (substitua 'nome_do_cliente' pelo nome real)
+    for lista in lista2:
+
+        cliente = Cliente_Model.objects.get(nome=lista[0])
+
+        # Criar uma instância do pedido
+        pedido = PedidoModel(cliente=cliente)
+        pedido.save()
+
+        # Adicionar itens ao pedido
+        produto1 = Produto_Model.objects.get(nome=lista[1],modelo=lista[2])
+        item1 = ItemPedido(produto=produto1, quantidade_alugada=lista[3], pedido=pedido)
+        item1.save()
+
+        '''
+        produto2 = Produto_Model.objects.get(nome=lista[2])
+        item2 = ItemPedido(produto=produto2, quantidade_alugada=3, pedido=pedido)
+        item2.save()
+        '''
+
 def cadastro_pedido(request):
+    global lista2
     if request.method == 'POST':
         form = PedidoModelForm(request.POST)
+        if 'save_itens' in request.POST:
 
-        if form.is_valid():
-            # Salvar pedido principal
-            pedido = form.save()
+            if form.is_valid():
+                # Salvar pedido principal
+                pedido = form.cleaned_data.get('cliente')
 
-            # Salvar itens do pedido
-            itens_pedido_formset = form.itens_pedido(queryset=ItemPedido.objects.none(), data=request.POST)
-            if itens_pedido_formset.is_valid():
-                for formset_form in itens_pedido_formset:
-                    produto = formset_form.cleaned_data.get('produto')
-                    quantidade_alugada = formset_form.cleaned_data.get('quantidade_alugada')
-                    print(produto)
-                    print(quantidade_alugada)
+                # Salvar itens do pedido
+                itens_pedido_formset = form.itens_pedido(queryset=ItemPedido.objects.none(), data=request.POST)
+                if itens_pedido_formset.is_valid():
+
+                    for formset_form in itens_pedido_formset:
+                        produto = formset_form.cleaned_data.get('produto')
+                        quantidade_alugada = formset_form.cleaned_data.get('quantidade_alugada')
+                        print(pedido)
+                        print(produto)
+                        print(quantidade_alugada)
+                        lista = [pedido.cliente.nome,produto.nome,produto.modelo,quantidade_alugada]
+                    lista2.append(lista)
+                    print(lista2)
+                    '''
 
                     if produto and quantidade_alugada:
                         item_pedido = formset_form.save(commit=False)
                         item_pedido.pedido = pedido  # Certifique-se de associar ao pedido
                         item_pedido.save()
 
-                return render(request, 'cadastro_pedido.html', {'form': form})  # Redirecionar para a página de sucesso após salvar
+                    '''
+                    return render(request, 'cadastro_pedido.html', {'form': form})  # Redirecionar para a página de sucesso após salvar
+                else:
+                    print("Formulário do item não é válido")
             else:
-                print("Formulário do item não é válido")
-        else:
-            print("Formulário principal não é válido")
+                print("Formulário principal não é válido")
 
+        elif 'save_pedido' in request.POST:
+            salva_pedido()
+            lista2 = []
     else:
         form = PedidoModelForm()
 
