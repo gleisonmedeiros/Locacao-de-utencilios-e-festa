@@ -30,7 +30,33 @@ def cadastro_cliente(request):
 
 
 def agenda(request):
-    return render(request, 'agenda.html')
+    pedidos = PedidoModel.objects.select_related('cliente').prefetch_related('itens_pedido')
+
+    # Crie um dicionário para armazenar os itens do pedido agrupados por cliente
+    itens_por_cliente = {}
+
+    # Agrupe os itens do pedido por cliente
+    for pedido in pedidos:
+        cliente = pedido.cliente
+
+        # Se o cliente ainda não estiver no dicionário, crie uma lista vazia para ele
+        if cliente not in itens_por_cliente:
+            itens_por_cliente[cliente] = []
+
+        # Adicione os itens do pedido à lista do cliente
+        itens_por_cliente[cliente].extend(pedido.itens_pedido.all())
+
+    # Imprima os detalhes no console para cada cliente
+    for cliente, itens_cliente in itens_por_cliente.items():
+        print(f"Cliente: {cliente.nome}")
+
+        # Imprima os detalhes do item para cada cliente
+        for item_pedido in itens_cliente:
+            print(f"  Produto: {item_pedido.produto.nome}")
+            print(f"  Quantidade Alugada: {item_pedido.quantidade_alugada}")
+
+        print("-" * 20)  # Linha separadora opcional
+    return render(request, 'agenda.html',{})
 
 def cadastro_produto(request):
     if request.method == 'POST':
@@ -47,89 +73,21 @@ def cadastro_produto(request):
         form = ProdutoForm()
     return render(request, 'cadastro_produto.html', {'form': form})
 
-'''
-def cadastro_pedido(request):
-    itens_acumulados = []
-
-    form = PedidoModelForm(request.POST or None)
-
-
-    if request.method == 'POST':
-        if 'save_itens' in request.POST:
-            if form.is_valid():
-                cliente = form.cleaned_data['cliente']
-                print(f'Cliente: {cliente}')
-
-                # Acesso aos dados do formset
-                itens_pedido_formset = form.itens_pedido(queryset=ItemPedido.objects.none(), data=request.POST)
-
-                # Verificar se o formset é válido
-                if itens_pedido_formset.is_valid():
-                    for formset_form in itens_pedido_formset:
-                        produto = formset_form.cleaned_data.get('produto')
-                        quantidade_alugada = formset_form.cleaned_data.get('quantidade_alugada')
-                        if produto and quantidade_alugada:
-                            print(f'Produto: {produto}, Quantidade Alugada: {quantidade_alugada}')
-                else:
-                    print("Formulário não é válido")
-
-                # Adicione lógica adicional conforme necessário
-
-            else:
-                print("erro no formulário")
-
-            print("iu")
-            # Criar uma instância do cliente (substitua 'nome_do_cliente' pelo nome real)
-            cliente = Cliente_Model.objects.get(nome='romeu')
-
-            # Criar uma instância do pedido
-            pedido = PedidoModel(cliente=cliente)
-            pedido.save()
-
-            # Adicionar itens ao pedido
-            produto1 = Produto_Model.objects.get(nome='cadeira')
-            item1 = ItemPedido(produto=produto1, quantidade_alugada=2, pedido=pedido)
-            item1.save()
-
-            produto2 = Produto_Model.objects.get(nome='mesa')
-            item2 = ItemPedido(produto=produto2, quantidade_alugada=3, pedido=pedido)
-            item2.save()
-
-
-        elif 'save_pedido' in request.POST:
-            # Botão para salvar o pedido pressionado
-            if form.is_valid():
-                pedido = form.save()
-                # Adicione os itens acumulados ao pedido
-                for item_acumulado in itens_acumulados:
-                    item_acumulado.pedido = pedido
-                    item_acumulado.save()
-
-                return redirect('cadastro_pedido')
-
-    return render(request, 'cadastro_pedido.html', {'form': form})
-'''
 
 def salva_pedido():
+    global lista2
+
+    cliente = Cliente_Model.objects.get(nome=lista2[0][0])
+    pedido = PedidoModel(cliente=cliente)
+    pedido.save()
     # Criar uma instância do cliente (substitua 'nome_do_cliente' pelo nome real)
     for lista in lista2:
-
-        cliente = Cliente_Model.objects.get(nome=lista[0])
-
-        # Criar uma instância do pedido
-        pedido = PedidoModel(cliente=cliente)
-        pedido.save()
 
         # Adicionar itens ao pedido
         produto1 = Produto_Model.objects.get(nome=lista[1],modelo=lista[2])
         item1 = ItemPedido(produto=produto1, quantidade_alugada=lista[3], pedido=pedido)
         item1.save()
 
-        '''
-        produto2 = Produto_Model.objects.get(nome=lista[2])
-        item2 = ItemPedido(produto=produto2, quantidade_alugada=3, pedido=pedido)
-        item2.save()
-        '''
 
 def cadastro_pedido(request):
     global lista2
@@ -148,20 +106,11 @@ def cadastro_pedido(request):
                     for formset_form in itens_pedido_formset:
                         produto = formset_form.cleaned_data.get('produto')
                         quantidade_alugada = formset_form.cleaned_data.get('quantidade_alugada')
-                        print(pedido)
-                        print(produto)
-                        print(quantidade_alugada)
-                        lista = [pedido.cliente.nome,produto.nome,produto.modelo,quantidade_alugada]
+                        nome = (str(pedido))
+                        lista = [nome,produto.nome,produto.modelo,quantidade_alugada]
                     lista2.append(lista)
                     print(lista2)
-                    '''
 
-                    if produto and quantidade_alugada:
-                        item_pedido = formset_form.save(commit=False)
-                        item_pedido.pedido = pedido  # Certifique-se de associar ao pedido
-                        item_pedido.save()
-
-                    '''
                     return render(request, 'cadastro_pedido.html', {'form': form})  # Redirecionar para a página de sucesso após salvar
                 else:
                     print("Formulário do item não é válido")
