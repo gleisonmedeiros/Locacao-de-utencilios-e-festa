@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from .forms import ProdutoForm, ClienteForm, PedidoModelForm,ItemPedidoForm
 from .models import Cliente_Model, Produto_Model
 from .models import PedidoModel, ItemPedido
+from collections import defaultdict
 
 lista2 = []
 
@@ -30,33 +31,26 @@ def cadastro_cliente(request):
 
 
 def agenda(request):
-    pedidos = PedidoModel.objects.select_related('cliente').prefetch_related('itens_pedido')
+    produtos_por_cliente = defaultdict(list)
 
-    # Crie um dicionário para armazenar os itens do pedido agrupados por cliente
-    itens_por_cliente = {}
+    # Consulta para obter os itens dos pedidos com informações relacionadas
+    pedidos_itens = ItemPedido.objects.select_related('produto', 'pedido__cliente').all()
 
-    # Agrupe os itens do pedido por cliente
-    for pedido in pedidos:
-        cliente = pedido.cliente
+    # Preencher o dicionário com os produtos agrupados por cliente
+    for pedido_item in pedidos_itens:
+        produto_nome = pedido_item.produto.nome
+        quantidade_alugada = pedido_item.quantidade_alugada
+        cliente_nome = pedido_item.pedido.cliente.nome
 
-        # Se o cliente ainda não estiver no dicionário, crie uma lista vazia para ele
-        if cliente not in itens_por_cliente:
-            itens_por_cliente[cliente] = []
+        # Adicionar informações ao dicionário
+        produtos_por_cliente[cliente_nome].append({
+            'produto_nome': produto_nome,
+            'quantidade_alugada': quantidade_alugada,
+        })
 
-        # Adicione os itens do pedido à lista do cliente
-        itens_por_cliente[cliente].extend(pedido.itens_pedido.all())
+    # Criar um contexto com os dados a serem enviados para o template
 
-    # Imprima os detalhes no console para cada cliente
-    for cliente, itens_cliente in itens_por_cliente.items():
-        print(f"Cliente: {cliente.nome}")
-
-        # Imprima os detalhes do item para cada cliente
-        for item_pedido in itens_cliente:
-            print(f"  Produto: {item_pedido.produto.nome}")
-            print(f"  Quantidade Alugada: {item_pedido.quantidade_alugada}")
-
-        print("-" * 20)  # Linha separadora opcional
-    return render(request, 'agenda.html',{})
+    return render(request, 'agenda.html',{'produtos_por_cliente': produtos_por_cliente})
 
 def cadastro_produto(request):
     if request.method == 'POST':
