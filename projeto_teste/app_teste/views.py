@@ -31,6 +31,10 @@ def cadastro_cliente(request):
 
 
 def agenda(request):
+    nome_cliente = Cliente_Model.objects.all()
+
+    nomes_clientes = [cliente.nome for cliente in nome_cliente]
+
     produtos_por_cliente = defaultdict(list)
 
     # Consulta para obter os itens dos pedidos com informações relacionadas
@@ -48,9 +52,24 @@ def agenda(request):
             'quantidade_alugada': quantidade_alugada,
         })
 
-    # Criar um contexto com os dados a serem enviados para o template
+    dicionario_novo = dict(produtos_por_cliente)
 
-    return render(request, 'agenda.html',{'produtos_por_cliente': produtos_por_cliente})
+    nome_achado = []
+
+    for nome in nomes_clientes:
+        if nome in dicionario_novo:
+            nome_achado.append(nome)
+
+    result = []
+    for name, items in dicionario_novo.items():
+        result.append(name)
+        result.append([[item['produto_nome'], item['quantidade_alugada']] for item in items])
+
+    print(result)
+
+    lista_dados = [(nome, itens) for nome, itens in dicionario_novo.items()]
+
+    return render(request, 'agenda.html',{'lista_dados':lista_dados})
 
 def cadastro_produto(request):
     if request.method == 'POST':

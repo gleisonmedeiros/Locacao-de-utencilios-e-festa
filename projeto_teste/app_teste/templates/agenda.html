@@ -3,17 +3,17 @@
 {% block content %}
 
 <div class="row">
-    {% for cliente in produtos_por_cliente.items %}
+    {% for nome, itens in lista_dados %}
         <div class="col-md-4">
             <div style="margin-top: 60px;"></div>
-            <div class="card" style="width: 18rem;" >
-                <svg class="bd-placeholder-img card-img-top" width="100%" height="50" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Image cap" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#868e96"></rect><text x="50%" y="50%" fill="#dee2e6" dy=".3em">Image cap</text></svg>
+            <div class="card" style="width: 18rem;">
                 <div class="card-body">
-                    <h5 class="card-title">{{ cliente }}</h5>
-                    {% for produto in produtos %}
-                        <p class="card-text">{{ produto.produto_nome }}</p>
-                        <p class="card-text">{{ produto.quantidade_alugada }}</p>
-                    {% endfor %}
+                    <h5 class="card-title">{{ nome }}</h5>
+
+                        {% for item in itens %}
+                            <p class="card-text">Produto: {{ item.produto_nome }}   Quantidade: {{ item.quantidade_alugada }}</p>
+                        {% endfor %}
+
                     <a href="#" class="btn btn-primary">Go somewhere</a>
                 </div>
             </div>
@@ -22,14 +22,4 @@
 </div>
 
 
-    <div style="margin-top: 60px;"></div>
-    <div class="card" style="width: 18rem;" >
-      <svg class="bd-placeholder-img card-img-top" width="100%" height="50" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Image cap" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#868e96"></rect><text x="50%" y="50%" fill="#dee2e6" dy=".3em">Image cap</text></svg>
-        <div class="card-body">
-        <h5 class="card-title">Título{{ pedido.cliente.nome }}</h5>
-        <p class="card-text">Aqui está a mensagem!!</p>
-        <a href="#" class="btn btn-primary">Go somewhere</a>
-        </div>
-    </div>
-<td>{{ pedido.cliente.nome }}</td>
 {% endblock %}
