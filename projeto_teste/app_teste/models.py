@@ -24,6 +24,7 @@ class Cliente_Model(models.Model):
 class PedidoModel(models.Model):
     cliente = models.ForeignKey(Cliente_Model, on_delete=models.CASCADE)
     itens_pedido = models.ManyToManyField('ItemPedido',blank=True, null=True)  # Use aspas para evitar referência circular
+    data_de_locacao = models.CharField(max_length=10)
 
     def __str__(self):
         return self.cliente.nome

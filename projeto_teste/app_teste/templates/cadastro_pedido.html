@@ -7,21 +7,21 @@
   <nav class="navbar"  style="margin-top: 50px;" >
     <a class="navbar-brand" href="#">Cadastro do pedido</a>
   </nav>
+<div class="col-4">
+  <form method="post">
+    {% csrf_token %}
 
-<form method="post">
-  {% csrf_token %}
+    {{ form.as_p }}
 
-  {{ form.as_p }}
+    {{ form.itens_pedido.management_form }}
+    {% for formset_form in form.itens_pedido.forms %}
+      {{ formset_form.as_table }}
+    {% endfor %}
 
-  {{ form.itens_pedido.management_form }}
-  {% for formset_form in form.itens_pedido.forms %}
-    {{ formset_form.as_table }}
-  {% endfor %}
-
-  <input type="submit" name="save_itens" value="Salvar Itens">
-  <input type="submit" name="save_pedido" value="Salvar Pedido">
-</form>
-
+    <input type="submit" name="save_itens" value="Salvar Itens">
+    <input type="submit" name="save_pedido" value="Salvar Pedido">
+  </form>
+</div>
 
 
 <script>
@@ -45,23 +45,6 @@
 </script>
 
 
-<script>
-  function formatarDataNascimento(input) {
-    let dataNascimento = input.value.replace(/\D/g, ''); // Remove caracteres não numéricos
-
-    if (dataNascimento.length === 8) {
-      // Formato para data de nascimento (8 dígitos)
-      dataNascimento = dataNascimento.replace(/^(\d{2})(\d{2})(\d{4})$/, "$1/$2/$3");
-    }
-
-    input.value = dataNascimento;
-  }
-
-  // Adiciona um ouvinte de evento para formatar a data de nascimento quando o usuário digitar
-  document.getElementById('nasc').addEventListener('input', function() {
-    formatarDataNascimento(this);
-  });
-</script>
 
 
 

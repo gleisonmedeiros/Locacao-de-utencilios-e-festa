@@ -4,6 +4,7 @@ from .forms import ProdutoForm, ClienteForm, PedidoModelForm,ItemPedidoForm
 from .models import Cliente_Model, Produto_Model
 from .models import PedidoModel, ItemPedido
 from collections import defaultdict
+from datetime import datetime
 
 lista2 = []
 
@@ -33,6 +34,8 @@ def cadastro_cliente(request):
 def agenda(request):
     nome_cliente = Cliente_Model.objects.all()
 
+    #pedido = PedidoModel.objects.all()
+
     nomes_clientes = [cliente.nome for cliente in nome_cliente]
 
     produtos_por_cliente = defaultdict(list)
@@ -45,11 +48,16 @@ def agenda(request):
         produto_nome = pedido_item.produto.nome
         quantidade_alugada = pedido_item.quantidade_alugada
         cliente_nome = pedido_item.pedido.cliente.nome
+        temp = eval(pedido_item.pedido.data_de_locacao)
+        data_locacao = temp[-1]
+        print(type(data_locacao))
+        print(data_locacao)
 
         # Adicionar informações ao dicionário
         produtos_por_cliente[cliente_nome].append({
             'produto_nome': produto_nome,
             'quantidade_alugada': quantidade_alugada,
+            'data_locacao': data_locacao,
         })
 
     dicionario_novo = dict(produtos_por_cliente)
@@ -63,11 +71,13 @@ def agenda(request):
     result = []
     for name, items in dicionario_novo.items():
         result.append(name)
-        result.append([[item['produto_nome'], item['quantidade_alugada']] for item in items])
+        result.append([[item['produto_nome'], item['quantidade_alugada'],item['data_locacao']] for item in items])
 
-    print(result)
+    #print(result)
 
     lista_dados = [(nome, itens) for nome, itens in dicionario_novo.items()]
+
+    print(lista_dados)
 
     return render(request, 'agenda.html',{'lista_dados':lista_dados})
 
@@ -91,7 +101,7 @@ def salva_pedido():
     global lista2
 
     cliente = Cliente_Model.objects.get(nome=lista2[0][0])
-    pedido = PedidoModel(cliente=cliente)
+    pedido = PedidoModel(cliente=cliente, data_de_locacao=lista2[-1])
     pedido.save()
     # Criar uma instância do cliente (substitua 'nome_do_cliente' pelo nome real)
     for lista in lista2:
@@ -111,6 +121,7 @@ def cadastro_pedido(request):
             if form.is_valid():
                 # Salvar pedido principal
                 pedido = form.cleaned_data.get('cliente')
+                data = form.cleaned_data.get('data_de_locacao')
 
                 # Salvar itens do pedido
                 itens_pedido_formset = form.itens_pedido(queryset=ItemPedido.objects.none(), data=request.POST)
@@ -120,9 +131,10 @@ def cadastro_pedido(request):
                         produto = formset_form.cleaned_data.get('produto')
                         quantidade_alugada = formset_form.cleaned_data.get('quantidade_alugada')
                         nome = (str(pedido))
-                        lista = [nome,produto.nome,produto.modelo,quantidade_alugada]
+                        nova_data = str(data)
+                        lista = [nome,produto.nome,produto.modelo,quantidade_alugada,nova_data]
                     lista2.append(lista)
-                    print(lista2)
+                    #print(lista2)
 
                     return render(request, 'cadastro_pedido.html', {'form': form})  # Redirecionar para a página de sucesso após salvar
                 else:

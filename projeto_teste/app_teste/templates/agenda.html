@@ -6,13 +6,15 @@
     {% for nome, itens in lista_dados %}
         <div class="col-md-4">
             <div style="margin-top: 60px;"></div>
-            <div class="card" style="width: 18rem;">
+            <div class="card" style="width: 20rem;">
                 <div class="card-body">
                     <h5 class="card-title">{{ nome }}</h5>
 
                         {% for item in itens %}
                             <p class="card-text">Produto: {{ item.produto_nome }}   Quantidade: {{ item.quantidade_alugada }}</p>
+                            <p class="card-text"> Data de Locação: {{ item.data_locacao }}</p>
                         {% endfor %}
+
 
                     <a href="#" class="btn btn-primary">Go somewhere</a>
                 </div>
