@@ -19,13 +19,14 @@ class Cliente_Model(models.Model):
     referencia = models.CharField(max_length=200)
 
     def __str__(self):
-        return self.nome
+        return (f'{self.nome} - {self.telefone}')
 
 class PedidoModel(models.Model):
     cliente = models.ForeignKey(Cliente_Model, on_delete=models.CASCADE)
     itens_pedido = models.ManyToManyField('ItemPedido',blank=True, null=True)  # Use aspas para evitar referência circular
-    data_de_locacao = models.CharField(max_length=10)
-
+    data_de_locacao = models.CharField(max_length=10,null=True)
+    local = models.CharField(max_length=200,null=True)
+    observacao = models.CharField(max_length=400,null=True)
     def __str__(self):
         return self.cliente.nome
 

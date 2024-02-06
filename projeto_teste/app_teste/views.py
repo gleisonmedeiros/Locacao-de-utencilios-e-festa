@@ -32,11 +32,6 @@ def cadastro_cliente(request):
 
 
 def agenda(request):
-    nome_cliente = Cliente_Model.objects.all()
-
-    #pedido = PedidoModel.objects.all()
-
-    nomes_clientes = [cliente.nome for cliente in nome_cliente]
 
     produtos_por_cliente = defaultdict(list)
 
@@ -45,41 +40,36 @@ def agenda(request):
 
     # Preencher o dicionário com os produtos agrupados por cliente
     for pedido_item in pedidos_itens:
-        produto_nome = pedido_item.produto.nome
+        produto_nome = pedido_item.produto
         quantidade_alugada = pedido_item.quantidade_alugada
-        cliente_nome = pedido_item.pedido.cliente.nome
+        cliente_nome = pedido_item.pedido.cliente
         temp = eval(pedido_item.pedido.data_de_locacao)
         data_locacao = temp[-1]
-        print(type(data_locacao))
-        print(data_locacao)
+        local=(pedido_item.pedido.local)
+        observacao = (pedido_item.pedido.observacao)
+        chave = (cliente_nome, data_locacao,local,observacao)
 
         # Adicionar informações ao dicionário
-        produtos_por_cliente[cliente_nome].append({
+        produtos_por_cliente[chave].append({
             'produto_nome': produto_nome,
             'quantidade_alugada': quantidade_alugada,
-            'data_locacao': data_locacao,
         })
 
     dicionario_novo = dict(produtos_por_cliente)
 
-    nome_achado = []
-
-    for nome in nomes_clientes:
-        if nome in dicionario_novo:
-            nome_achado.append(nome)
-
     result = []
-    for name, items in dicionario_novo.items():
-        result.append(name)
-        result.append([[item['produto_nome'], item['quantidade_alugada'],item['data_locacao']] for item in items])
+    for chave, items in dicionario_novo.items():
+        cliente_nome, data_locacao,local,observacao = chave  # Desempacotando a tupla
+        result.append((cliente_nome, data_locacao,local,observacao,
+                       [[item['produto_nome'], item['quantidade_alugada']] for item in items]))
 
-    #print(result)
+    # Exibindo a lista de resultados
+    print(result)
 
-    lista_dados = [(nome, itens) for nome, itens in dicionario_novo.items()]
+    # Criando a lista de dados para renderizar no template
+    lista_dados = [(nome, data,local,observacao, itens) for nome, data,local,observacao, itens in result]
 
-    print(lista_dados)
-
-    return render(request, 'agenda.html',{'lista_dados':lista_dados})
+    return render(request, 'agenda.html', {'lista_dados': lista_dados})
 
 def cadastro_produto(request):
     if request.method == 'POST':
@@ -101,7 +91,7 @@ def salva_pedido():
     global lista2
 
     cliente = Cliente_Model.objects.get(nome=lista2[0][0])
-    pedido = PedidoModel(cliente=cliente, data_de_locacao=lista2[-1])
+    pedido = PedidoModel(cliente=cliente, data_de_locacao=lista2[4],local=lista2[5],observacao=lista2[6])
     pedido.save()
     # Criar uma instância do cliente (substitua 'nome_do_cliente' pelo nome real)
     for lista in lista2:
@@ -130,11 +120,13 @@ def cadastro_pedido(request):
                     for formset_form in itens_pedido_formset:
                         produto = formset_form.cleaned_data.get('produto')
                         quantidade_alugada = formset_form.cleaned_data.get('quantidade_alugada')
-                        nome = (str(pedido))
+                        local = formset_form.cleaned_data.get('local')
+                        observacao = formset_form.cleaned_data.get('observacao')
+                        texto = (str(pedido))
+                        nome = texto.split(" - ")[0]
                         nova_data = str(data)
-                        lista = [nome,produto.nome,produto.modelo,quantidade_alugada,nova_data]
+                        lista = [nome,produto.nome,produto.modelo,quantidade_alugada,nova_data,local,observacao]
                     lista2.append(lista)
-                    #print(lista2)
 
                     return render(request, 'cadastro_pedido.html', {'form': form})  # Redirecionar para a página de sucesso após salvar
                 else:

@@ -43,11 +43,14 @@ class ItemPedidoForm(forms.ModelForm):
 class PedidoModelForm(forms.ModelForm):
     class Meta:
         dicionario = {'class': 'form-select', 'aria-label':'Default select example'}
+        dicionario2 = {'class': 'form-control', 'type': 'text', 'id': '', 'placeholder': ''}
         model = PedidoModel
-        fields = ['cliente', 'data_de_locacao']
+        fields = ['cliente', 'data_de_locacao','local','observacao']
         widgets = {
             'cliente': forms.Select(attrs=dicionario),
             'data_de_locacao': forms.TextInput(attrs={**dicionario,'id': 'id_data'}),
+            'local': forms.TextInput(attrs=dicionario2),
+            'observacao': forms.TextInput(attrs=dicionario2),
         }
 
     itens_pedido = forms.inlineformset_factory(

@@ -17,9 +17,9 @@
     {% for formset_form in form.itens_pedido.forms %}
       {{ formset_form.as_table }}
     {% endfor %}
-
-    <input type="submit" name="save_itens" value="Salvar Itens">
-    <input type="submit" name="save_pedido" value="Salvar Pedido">
+  <p></p>
+    <input type="submit" class="btn btn-primary" name="save_itens" value="Salvar Itens">
+    <input type="submit" class="btn btn-success" name="save_pedido" value="Salvar Pedido">
   </form>
 </div>
 

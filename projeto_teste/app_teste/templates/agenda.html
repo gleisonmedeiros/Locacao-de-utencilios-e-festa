@@ -3,20 +3,21 @@
 {% block content %}
 
 <div class="row">
-    {% for nome, itens in lista_dados %}
+    {% for nome, data,local,observacao, itens in lista_dados %}
         <div class="col-md-4">
             <div style="margin-top: 60px;"></div>
-            <div class="card" style="width: 20rem;">
+            <div class="card" style="width: 25rem;">
                 <div class="card-body">
-                    <h5 class="card-title">{{ nome }}</h5>
+                    <h6 class="card-title">{{ nome }}</h6>
 
-                        {% for item in itens %}
-                            <p class="card-text">Produto: {{ item.produto_nome }}   Quantidade: {{ item.quantidade_alugada }}</p>
-                            <p class="card-text"> Data de Locação: {{ item.data_locacao }}</p>
-                        {% endfor %}
+                    {% for item in itens %}
+                        <p class="card-text">Produto's: {{ item.1 }} - {{ item.0 }}</p>
+                    {% endfor %}
 
-
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                    <p class="card-text"> Data de Locação: {{ data }}</p>
+                    <p class="card-text"> local: {{ local }}</p>
+                    <p class="card-text"> Observação: {{ observacao }}</p>
+                    <a href="#" class="btn btn-primary">Editar</a>
                 </div>
             </div>
         </div>
