@@ -8,15 +8,18 @@
             <div style="margin-top: 60px;"></div>
             <div class="card" style="width: 25rem;">
                 <div class="card-body">
-                    <h6 class="card-title">{{ nome }}</h6>
+                    <h5 class="card-title">{{ nome }}</h5>
 
                     {% for item in itens %}
-                        <p class="card-text">Produto's: {{ item.1 }} - {{ item.0 }}</p>
+                        <div class="card-text"><b>Produto's: </b>{{ item.1 }} - {{ item.0 }}</div>
                     {% endfor %}
+                    <p></p>
 
-                    <p class="card-text"> Data de Locação: {{ data }}</p>
-                    <p class="card-text"> local: {{ local }}</p>
-                    <p class="card-text"> Observação: {{ observacao }}</p>
+                    <div class="card-text"><b>Data de Locação: </b>{{ data }}</div>
+                    <div class="card-text"><b>local: </b>{{ local }}</div>
+                    <div class="card-text"><b>Observação: </b>{{ observacao }}</div>
+
+                    <p></p>
                     <a href="#" class="btn btn-primary">Editar</a>
                 </div>
             </div>

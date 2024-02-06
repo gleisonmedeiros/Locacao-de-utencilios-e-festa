@@ -7,6 +7,18 @@
   <nav class="navbar"  style="margin-top: 50px;" >
     <a class="navbar-brand" href="#">Cadastro do pedido</a>
   </nav>
+
+{% if resultado == 1 %}
+        <div class="alert alert-success" role="alert">
+            Produto salvo com Sucesso
+        </div>
+    {% elif resultado == 0 %}
+        <div class="alert alert-danger" role="alert">
+            Falha ao salvar o cadastro
+        </div>
+    {% else %}
+    {% endif %}
+
 <div class="col-4">
   <form method="post">
     {% csrf_token %}

@@ -5,6 +5,10 @@ from .models import Cliente_Model, Produto_Model
 from .models import PedidoModel, ItemPedido
 from collections import defaultdict
 from datetime import datetime
+import locale
+from unidecode import unidecode
+
+locale.setlocale(locale.LC_TIME, 'pt_BR.utf-8')
 
 lista2 = []
 
@@ -43,8 +47,12 @@ def agenda(request):
         produto_nome = pedido_item.produto
         quantidade_alugada = pedido_item.quantidade_alugada
         cliente_nome = pedido_item.pedido.cliente
-        temp = eval(pedido_item.pedido.data_de_locacao)
-        data_locacao = temp[-1]
+
+        data = pedido_item.pedido.data_de_locacao
+        data_formatada = datetime.strptime(data, "%d/%m/%Y")
+        # Obtenha o nome do dia da semana
+        print((data_formatada.strftime("%A")))
+        data_locacao =data + ' - ' + unidecode((data_formatada.strftime("%A").capitalize()))
         local=(pedido_item.pedido.local)
         observacao = (pedido_item.pedido.observacao)
         chave = (cliente_nome, data_locacao,local,observacao)
@@ -64,7 +72,7 @@ def agenda(request):
                        [[item['produto_nome'], item['quantidade_alugada']] for item in items]))
 
     # Exibindo a lista de resultados
-    print(result)
+    #print(result)
 
     # Criando a lista de dados para renderizar no template
     lista_dados = [(nome, data,local,observacao, itens) for nome, data,local,observacao, itens in result]
@@ -91,7 +99,8 @@ def salva_pedido():
     global lista2
 
     cliente = Cliente_Model.objects.get(nome=lista2[0][0])
-    pedido = PedidoModel(cliente=cliente, data_de_locacao=lista2[4],local=lista2[5],observacao=lista2[6])
+    pedido = PedidoModel(cliente=cliente, data_de_locacao=lista2[0][4],local=lista2[0][5],observacao=lista2[0][6])
+
     pedido.save()
     # Criar uma instância do cliente (substitua 'nome_do_cliente' pelo nome real)
     for lista in lista2:
@@ -107,36 +116,49 @@ def cadastro_pedido(request):
     if request.method == 'POST':
         form = PedidoModelForm(request.POST)
         if 'save_itens' in request.POST:
+            try:
 
-            if form.is_valid():
-                # Salvar pedido principal
-                pedido = form.cleaned_data.get('cliente')
-                data = form.cleaned_data.get('data_de_locacao')
+                if form.is_valid():
+                    # Salvar pedido principal
+                    pedido = form.cleaned_data.get('cliente')
+                    data = form.cleaned_data.get('data_de_locacao')
+                    local = form.cleaned_data.get('local')
+                    observacao = form.cleaned_data.get('observacao')
+                    nova_data = str(data)
 
-                # Salvar itens do pedido
-                itens_pedido_formset = form.itens_pedido(queryset=ItemPedido.objects.none(), data=request.POST)
-                if itens_pedido_formset.is_valid():
+                    # Salvar itens do pedido
+                    itens_pedido_formset = form.itens_pedido(queryset=ItemPedido.objects.none(), data=request.POST)
+                    if itens_pedido_formset.is_valid():
 
-                    for formset_form in itens_pedido_formset:
-                        produto = formset_form.cleaned_data.get('produto')
-                        quantidade_alugada = formset_form.cleaned_data.get('quantidade_alugada')
-                        local = formset_form.cleaned_data.get('local')
-                        observacao = formset_form.cleaned_data.get('observacao')
-                        texto = (str(pedido))
-                        nome = texto.split(" - ")[0]
-                        nova_data = str(data)
-                        lista = [nome,produto.nome,produto.modelo,quantidade_alugada,nova_data,local,observacao]
-                    lista2.append(lista)
+                        for formset_form in itens_pedido_formset:
+                            produto = formset_form.cleaned_data.get('produto')
+                            quantidade_alugada = formset_form.cleaned_data.get('quantidade_alugada')
+                            texto = (str(pedido))
+                            nome = texto.split(" - ")[0]
+                            lista = [nome,produto.nome,produto.modelo,quantidade_alugada,nova_data,local,observacao]
+                        lista2.append(lista)
 
-                    return render(request, 'cadastro_pedido.html', {'form': form})  # Redirecionar para a página de sucesso após salvar
-                else:
-                    print("Formulário do item não é válido")
+                        return render(request, 'cadastro_pedido.html', {'form': form})  # Redirecionar para a página de sucesso após salvar
+                    else:
+                        print("Formulário do item não é válido")
+            except:
+                print("Erro ao salvar o Item")
             else:
                 print("Formulário principal não é válido")
 
         elif 'save_pedido' in request.POST:
-            salva_pedido()
+            try:
+                salva_pedido()
+
+                resultado = 1
+            except:
+                resultado = 0
+
+            form = PedidoModelForm()
+            contexto = {'form': form,'resultado':resultado}
             lista2 = []
+
+            return render(request, 'cadastro_pedido.html', contexto)
     else:
         form = PedidoModelForm()
 
