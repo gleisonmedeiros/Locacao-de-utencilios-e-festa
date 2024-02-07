@@ -19,10 +19,38 @@
                     <div class="card-text"><b>local: </b>{{ local }}</div>
                     <div class="card-text"><b>Observação: </b>{{ observacao }}</div>
 
-                    <div class="card-text"><b>Observação: </b>{{ teste }}</div>
                     <p></p>
-                    <form name="delete_item" action="{% url 'agenda' %}" method="GET">
-                        <button type="submit" class="btn btn-danger">Deletar</button>
+                    <form  method="POST">
+                        {% csrf_token %}
+
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                          Deletar
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">ATENÇÃO</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                Você tem certeza que deseja deletar este pedido?
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancelar</button>
+
+                                  <input type="hidden" name="nome" value="{{ nome }}">
+                                  <input type="submit" class="btn btn-danger" name="save_itens" value="Sim">
+
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Fim Button trigger modal -->
                     </form>
 
                 </div>

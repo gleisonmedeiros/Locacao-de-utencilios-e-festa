@@ -36,53 +36,59 @@ def cadastro_cliente(request):
 
 
 def agenda(request):
-
-    produtos_por_cliente = defaultdict(list)
-
-    # Consulta para obter os itens dos pedidos com informações relacionadas
-    pedidos_itens = ItemPedido.objects.select_related('produto', 'pedido__cliente').all()
-
-    # Preencher o dicionário com os produtos agrupados por cliente
-    for pedido_item in pedidos_itens:
-        produto_nome = pedido_item.produto
-        quantidade_alugada = pedido_item.quantidade_alugada
-        cliente_nome = pedido_item.pedido.cliente
-
-        data = pedido_item.pedido.data_de_locacao
-        data_formatada = datetime.strptime(data, "%d/%m/%Y")
-        # Obtenha o nome do dia da semana
-        #print((data_formatada.strftime("%A")))
-        data_locacao =data + ' - ' + unidecode((data_formatada.strftime("%A").capitalize()))
-        local=(pedido_item.pedido.local)
-        observacao = (pedido_item.pedido.observacao)
-        chave = (cliente_nome, data_locacao,local,observacao)
-
-        # Adicionar informações ao dicionário
-        produtos_por_cliente[chave].append({
-            'produto_nome': produto_nome,
-            'quantidade_alugada': quantidade_alugada,
-        })
-
-    dicionario_novo = dict(produtos_por_cliente)
-
-    result = []
-    for chave, items in dicionario_novo.items():
-        cliente_nome, data_locacao,local,observacao = chave  # Desempacotando a tupla
-        result.append((cliente_nome, data_locacao,local,observacao,
-                       [[item['produto_nome'], item['quantidade_alugada']] for item in items]))
-
-    # Exibindo a lista de resultados
-    #print(result)
-
-    # Criando a lista de dados para renderizar no template
-    lista_dados = [(nome, data,local,observacao, itens) for nome, data,local,observacao, itens in result]
-
     if request.method == 'GET':
-        print("Entrei")
-        if 'delete_item' in request.POST:
-            print("aiai")
 
-    return render(request, 'agenda.html', {'lista_dados': lista_dados})
+        produtos_por_cliente = defaultdict(list)
+
+        # Consulta para obter os itens dos pedidos com informações relacionadas
+        pedidos_itens = ItemPedido.objects.select_related('produto', 'pedido__cliente').all()
+
+        # Preencher o dicionário com os produtos agrupados por cliente
+        for pedido_item in pedidos_itens:
+            produto_nome = pedido_item.produto
+            quantidade_alugada = pedido_item.quantidade_alugada
+            cliente_nome = pedido_item.pedido.cliente
+
+            data = pedido_item.pedido.data_de_locacao
+            data_formatada = datetime.strptime(data, "%d/%m/%Y")
+            # Obtenha o nome do dia da semana
+            #print((data_formatada.strftime("%A")))
+            data_locacao =data + ' - ' + unidecode((data_formatada.strftime("%A").capitalize()))
+            local=(pedido_item.pedido.local)
+            observacao = (pedido_item.pedido.observacao)
+            chave = (cliente_nome, data_locacao,local,observacao)
+
+            # Adicionar informações ao dicionário
+            produtos_por_cliente[chave].append({
+                'produto_nome': produto_nome,
+                'quantidade_alugada': quantidade_alugada,
+            })
+
+        dicionario_novo = dict(produtos_por_cliente)
+
+        result = []
+        for chave, items in dicionario_novo.items():
+            cliente_nome, data_locacao,local,observacao = chave  # Desempacotando a tupla
+            result.append((cliente_nome, data_locacao,local,observacao,
+                           [[item['produto_nome'], item['quantidade_alugada']] for item in items]))
+
+        # Exibindo a lista de resultados
+        #print(result)
+
+        # Criando a lista de dados para renderizar no template
+        lista_dados = [(nome, data,local,observacao, itens) for nome, data,local,observacao, itens in result]
+
+        return render(request, 'agenda.html', {'lista_dados': lista_dados})
+
+
+    elif request.method == 'POST':
+
+        if 'save_itens' in request.POST:
+            nome_cliente = (request.POST['nome'].split(' - ')[0])
+            cliente = Cliente_Model.objects.get(nome=nome_cliente)  # Obtenha o objeto do cliente pelo nome
+            pedido = PedidoModel.objects.get(cliente=cliente)  # Consulte o pedido usando o objeto do cliente
+            pedido.delete()
+            return redirect('agenda')
 
 
 
