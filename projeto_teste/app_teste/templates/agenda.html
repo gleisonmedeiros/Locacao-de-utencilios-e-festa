@@ -19,8 +19,12 @@
                     <div class="card-text"><b>local: </b>{{ local }}</div>
                     <div class="card-text"><b>Observação: </b>{{ observacao }}</div>
 
+                    <div class="card-text"><b>Observação: </b>{{ teste }}</div>
                     <p></p>
-                    <a href="#" class="btn btn-primary">Editar</a>
+                    <form name="delete_item" action="{% url 'agenda' %}" method="GET">
+                        <button type="submit" class="btn btn-danger">Deletar</button>
+                    </form>
+
                 </div>
             </div>
         </div>

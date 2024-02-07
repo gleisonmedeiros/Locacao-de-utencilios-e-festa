@@ -51,7 +51,7 @@ def agenda(request):
         data = pedido_item.pedido.data_de_locacao
         data_formatada = datetime.strptime(data, "%d/%m/%Y")
         # Obtenha o nome do dia da semana
-        print((data_formatada.strftime("%A")))
+        #print((data_formatada.strftime("%A")))
         data_locacao =data + ' - ' + unidecode((data_formatada.strftime("%A").capitalize()))
         local=(pedido_item.pedido.local)
         observacao = (pedido_item.pedido.observacao)
@@ -77,7 +77,14 @@ def agenda(request):
     # Criando a lista de dados para renderizar no template
     lista_dados = [(nome, data,local,observacao, itens) for nome, data,local,observacao, itens in result]
 
+    if request.method == 'GET':
+        print("Entrei")
+        if 'delete_item' in request.POST:
+            print("aiai")
+
     return render(request, 'agenda.html', {'lista_dados': lista_dados})
+
+
 
 def cadastro_produto(request):
     if request.method == 'POST':
