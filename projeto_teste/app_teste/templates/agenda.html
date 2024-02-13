@@ -24,12 +24,12 @@
                         {% csrf_token %}
 
                         <!-- Button trigger modal -->
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal{{ forloop.counter }}">
                           Deletar
                         </button>
 
                         <!-- Modal -->
-                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="exampleModal{{ forloop.counter }}" tabindex="-1" aria-labelledby="exampleModalLabel{{ forloop.counter }}" aria-hidden="true">
                           <div class="modal-dialog">
                             <div class="modal-content">
                               <div class="modal-header">
@@ -43,7 +43,8 @@
                                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancelar</button>
 
                                   <input type="hidden" name="nome" value="{{ nome }}">
-                                  <input type="submit" class="btn btn-danger" name="save_itens" value="Sim">
+                                  <input type="hidden" name="data" value="{{ data }}">
+                                  <input type="submit" class="btn btn-danger" name="delete_itens" value="Sim">
 
                               </div>
                             </div>

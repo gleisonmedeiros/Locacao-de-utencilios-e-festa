@@ -53,7 +53,10 @@ def agenda(request):
             data_formatada = datetime.strptime(data, "%d/%m/%Y")
             # Obtenha o nome do dia da semana
             #print((data_formatada.strftime("%A")))
-            data_locacao =data + ' - ' + unidecode((data_formatada.strftime("%A").capitalize()))
+            dia_da_semana = unidecode((data_formatada.strftime("%A").capitalize()))
+            if (dia_da_semana == 'Sa!bado'):
+                dia_da_semana = 'Sábado'
+            data_locacao =data + ' - ' + dia_da_semana
             local=(pedido_item.pedido.local)
             observacao = (pedido_item.pedido.observacao)
             chave = (cliente_nome, data_locacao,local,observacao)
@@ -83,10 +86,13 @@ def agenda(request):
 
     elif request.method == 'POST':
 
-        if 'save_itens' in request.POST:
+        if 'delete_itens' in request.POST:
             nome_cliente = (request.POST['nome'].split(' - ')[0])
+            data = (request.POST['data'].split(' ')[0])
+            print(nome_cliente)
+            print(data)
             cliente = Cliente_Model.objects.get(nome=nome_cliente)  # Obtenha o objeto do cliente pelo nome
-            pedido = PedidoModel.objects.get(cliente=cliente)  # Consulte o pedido usando o objeto do cliente
+            pedido = PedidoModel.objects.get(cliente=cliente,data_de_locacao=data)  # Consulte o pedido usando o objeto do cliente
             pedido.delete()
             return redirect('agenda')
 
