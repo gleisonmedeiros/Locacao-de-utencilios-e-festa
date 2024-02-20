@@ -66,3 +66,7 @@ class PedidoModelForm(forms.ModelForm):
                 attrs={'class': 'form-control'}),
         },
     )
+
+class DateRangeForm(forms.Form):
+    data_inicio = forms.DateField(label='Data de Início', widget=forms.DateInput(attrs={'type': 'date','class':'form-control'}))
+    data_fim = forms.DateField(label='Data de Fim', widget=forms.DateInput(attrs={'type': 'date','class':'form-control'}))

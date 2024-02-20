@@ -2,10 +2,18 @@
 
 {% block content %}
 
+ <div style="margin-top: 60px;"></div>
+<form method="post" >
+    <div style="display: flex; align-items: center;">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="button" class="btn btn-light" style="margin-left: 10px;">Pesquisar</button>
+    </div>
+</form>
+
 <div class="row">
     {% for nome, data,local,observacao, itens in lista_dados %}
         <div class="col-md-4">
-            <div style="margin-top: 60px;"></div>
             <div class="card" style="width: 25rem;">
                 <div class="card-body">
                     <h5 class="card-title">{{ nome }}</h5>
@@ -59,6 +67,26 @@
         </div>
     {% endfor %}
 </div>
+
+<script>
+    $(function() {
+        // Configurando o Datepicker em português
+        $.datepicker.setDefaults($.datepicker.regional['pt-BR']);
+
+        // Configurando o formato de data brasileiro
+        $.datepicker.setDefaults({
+            dateFormat: 'dd/mm/yy',
+            dayNamesMin: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+            monthNames: [
+                'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+            ]
+        });
+
+        // Inicializando o Datepicker
+        $("#id_data").datepicker();
+    });
+</script>
 
 
 {% endblock %}

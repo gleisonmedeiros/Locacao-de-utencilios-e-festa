@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .forms import ProdutoForm, ClienteForm, PedidoModelForm,ItemPedidoForm
+from .forms import ProdutoForm, ClienteForm, PedidoModelForm,ItemPedidoForm, DateRangeForm
 from .models import Cliente_Model, Produto_Model
 from .models import PedidoModel, ItemPedido
 from collections import defaultdict
@@ -37,6 +37,7 @@ def cadastro_cliente(request):
 
 def agenda(request):
     if request.method == 'GET':
+        form_date = DateRangeForm()
 
         produtos_por_cliente = defaultdict(list)
 
@@ -81,7 +82,7 @@ def agenda(request):
         # Criando a lista de dados para renderizar no template
         lista_dados = [(nome, data,local,observacao, itens) for nome, data,local,observacao, itens in result]
 
-        return render(request, 'agenda.html', {'lista_dados': lista_dados})
+        return render(request, 'agenda.html', {'lista_dados': lista_dados, 'form':form_date})
 
 
     elif request.method == 'POST':
