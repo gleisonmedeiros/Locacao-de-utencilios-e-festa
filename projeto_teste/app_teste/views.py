@@ -7,6 +7,7 @@ from collections import defaultdict
 from datetime import datetime
 import locale
 from unidecode import unidecode
+from django.urls import reverse
 
 locale.setlocale(locale.LC_TIME, 'pt_BR.utf-8')
 
@@ -35,9 +36,16 @@ def cadastro_cliente(request):
     return render(request, 'cadastro_cliente.html', {'form': form})
 
 
+def formata_data(data):
+    nova_data = datetime.strptime(data.split(' - ')[0], "%d/%m/%Y").date()
+
+    return nova_data
+
 def agenda(request):
+    form_date = DateRangeForm()
+
     if request.method == 'GET':
-        form_date = DateRangeForm()
+
 
         produtos_por_cliente = defaultdict(list)
 
@@ -51,13 +59,14 @@ def agenda(request):
             cliente_nome = pedido_item.pedido.cliente
 
             data = pedido_item.pedido.data_de_locacao
-            data_formatada = datetime.strptime(data, "%d/%m/%Y")
+            data_formatada = datetime.strptime(data, "%Y-%m-%d")
             # Obtenha o nome do dia da semana
             #print((data_formatada.strftime("%A")))
             dia_da_semana = unidecode((data_formatada.strftime("%A").capitalize()))
             if (dia_da_semana == 'Sa!bado'):
                 dia_da_semana = 'Sábado'
-            data_locacao =data + ' - ' + dia_da_semana
+            ano, mes, dia = data.split('-')
+            data_locacao =f'{dia}/{mes}/{ano} - {dia_da_semana}'
             local=(pedido_item.pedido.local)
             observacao = (pedido_item.pedido.observacao)
             chave = (cliente_nome, data_locacao,local,observacao)
@@ -82,12 +91,37 @@ def agenda(request):
         # Criando a lista de dados para renderizar no template
         lista_dados = [(nome, data,local,observacao, itens) for nome, data,local,observacao, itens in result]
 
-        return render(request, 'agenda.html', {'lista_dados': lista_dados, 'form':form_date})
+        paramentro = False
+        if request.GET.get('datainicio'):
+            data_inicio = (request.GET.get('datainicio'))
+            data_fim = (request.GET.get('datafim'))
+            print("ui")
+
+            data_inicio_formatada = datetime.strptime(data_inicio, "%Y-%m-%d").date()
+            data_fim_formatada = datetime.strptime(data_fim, "%Y-%m-%d").date()
+            paramentro = True
+
+        # Lista de dados filtrados com base na data alvo
+            lista_filtrada = [(nome, data, local, observacao, itens) for nome, data, local, observacao, itens in lista_dados
+                          if (formata_data(data) >= data_inicio_formatada) and ((formata_data(data) <= data_fim_formatada))]
+
+        if(paramentro == False):
+            return render(request, 'agenda.html', {'lista_dados': lista_dados, 'form':form_date})
+        else:
+            return render(request, 'agenda.html', {'lista_dados': lista_filtrada, 'form': form_date})
 
 
     elif request.method == 'POST':
 
-        if 'delete_itens' in request.POST:
+        form_date = DateRangeForm(request.POST)
+
+        if form_date.is_valid() and ('pesquisar' in request.POST):
+            data_inicio = form_date.cleaned_data['data_inicio'].strftime('%Y-%m-%d')
+            data_fim = form_date.cleaned_data['data_fim'].strftime('%Y-%m-%d')
+            url_agenda = reverse('agenda') + '?datainicio=' + data_inicio + '&datafim=' + data_fim
+            return redirect(url_agenda)
+
+        elif 'delete_itens' in request.POST:
             nome_cliente = (request.POST['nome'].split(' - ')[0])
             data = (request.POST['data'].split(' ')[0])
             print(nome_cliente)
@@ -96,6 +130,10 @@ def agenda(request):
             pedido = PedidoModel.objects.get(cliente=cliente,data_de_locacao=data)  # Consulte o pedido usando o objeto do cliente
             pedido.delete()
             return redirect('agenda')
+        else:
+            print('erro no POST')
+            return redirect('agenda')
+
 
 
 

@@ -3,11 +3,11 @@
 {% block content %}
 
  <div style="margin-top: 60px;"></div>
-<form method="post" >
+<form method="POST" >
     <div style="display: flex; align-items: center;">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="button" class="btn btn-light" style="margin-left: 10px;">Pesquisar</button>
+        <input type="submit" class="btn btn-light" name="pesquisar" value="Pesquisar">
     </div>
 </form>
 
@@ -67,6 +67,27 @@
         </div>
     {% endfor %}
 </div>
+
+<script>
+    $(function() {
+        // Configurando o Datepicker em português
+        $.datepicker.setDefaults($.datepicker.regional['pt-BR']);
+
+        // Configurando o formato de data brasileiro
+        $.datepicker.setDefaults({
+            dateFormat: 'dd/mm/yy',
+            dayNamesMin: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+            monthNames: [
+                'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+            ]
+        });
+
+        // Inicializando o Datepicker
+        $("#id_data").datepicker();
+    });
+</script>
+
 
 <script>
     $(function() {

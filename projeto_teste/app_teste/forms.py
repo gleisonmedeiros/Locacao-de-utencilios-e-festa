@@ -48,7 +48,7 @@ class PedidoModelForm(forms.ModelForm):
         fields = ['cliente', 'data_de_locacao','local','observacao']
         widgets = {
             'cliente': forms.Select(attrs=dicionario),
-            'data_de_locacao': forms.TextInput(attrs={**dicionario,'id': 'id_data'}),
+            'data_de_locacao': forms.TextInput(attrs={**dicionario,'id': 'id_data','type': 'date'}),
             'local': forms.TextInput(attrs=dicionario2),
             'observacao': forms.TextInput(attrs=dicionario2),
         }
