@@ -1,5 +1,10 @@
 from django.urls import path
-from .views import ola_mundo, index, cadastro_cliente, cadastro_pedido ,cadastro_produto, agenda
+from .views import (ola_mundo,
+                    index,
+                    cadastro_cliente,
+                    cadastro_pedido,
+                    cadastro_produto,
+                    agenda, pesquisacliente)
 
 urlpatterns = [
     path('ola-mundo/', ola_mundo, name='ola_mundo'),
@@ -8,4 +13,5 @@ urlpatterns = [
     path('cadastro-pedido/', cadastro_pedido, name='cadastro_pedido'),
     path('cadastro-produto/', cadastro_produto, name='cadastro_produto'),
     path('agenda/', agenda, name='agenda'),
+    path('pesquisacliente/', pesquisacliente, name='pesquisacliente'),
 ]

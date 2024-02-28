@@ -124,10 +124,14 @@ def agenda(request):
         elif 'delete_itens' in request.POST:
             nome_cliente = (request.POST['nome'].split(' - ')[0])
             data = (request.POST['data'].split(' ')[0])
+            data_datetime = datetime.strptime(data, "%d/%m/%Y")
+            data_formatada = data_datetime.strftime("%Y-%m-%d")
             print(nome_cliente)
             print(data)
             cliente = Cliente_Model.objects.get(nome=nome_cliente)  # Obtenha o objeto do cliente pelo nome
-            pedido = PedidoModel.objects.get(cliente=cliente,data_de_locacao=data)  # Consulte o pedido usando o objeto do cliente
+            pedido = PedidoModel.objects.get(cliente=cliente,data_de_locacao=data_formatada)  # Consulte o pedido usando o objeto do cliente
+            print(cliente)
+            print(data)
             pedido.delete()
             return redirect('agenda')
         else:
@@ -168,6 +172,8 @@ def salva_pedido():
         item1 = ItemPedido(produto=produto1, quantidade_alugada=lista[3], pedido=pedido)
         item1.save()
 
+        print(item1)
+
 
 def cadastro_pedido(request):
     global lista2
@@ -195,6 +201,7 @@ def cadastro_pedido(request):
                             nome = texto.split(" - ")[0]
                             lista = [nome,produto.nome,produto.modelo,quantidade_alugada,nova_data,local,observacao]
                         lista2.append(lista)
+                        print(lista2)
 
                         return render(request, 'cadastro_pedido.html', {'form': form})  # Redirecionar para a página de sucesso após salvar
                     else:
@@ -221,3 +228,7 @@ def cadastro_pedido(request):
         form = PedidoModelForm()
 
     return render(request, 'cadastro_pedido.html', {'form': form})
+
+def pesquisacliente(request):
+    if request.method == 'GET':
+        return render(request, 'pesquisa_cliente.html', {})

@@ -28,6 +28,7 @@
                     <div class="card-text"><b>Observação: </b>{{ observacao }}</div>
 
                     <p></p>
+
                     <form  method="POST">
                         {% csrf_token %}
 
@@ -35,6 +36,7 @@
                         <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal{{ forloop.counter }}">
                           Deletar
                         </button>
+
 
                         <!-- Modal -->
                         <div class="modal fade" id="exampleModal{{ forloop.counter }}" tabindex="-1" aria-labelledby="exampleModalLabel{{ forloop.counter }}" aria-hidden="true">
@@ -68,46 +70,7 @@
     {% endfor %}
 </div>
 
-<script>
-    $(function() {
-        // Configurando o Datepicker em português
-        $.datepicker.setDefaults($.datepicker.regional['pt-BR']);
 
-        // Configurando o formato de data brasileiro
-        $.datepicker.setDefaults({
-            dateFormat: 'dd/mm/yy',
-            dayNamesMin: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
-            monthNames: [
-                'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-                'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
-            ]
-        });
-
-        // Inicializando o Datepicker
-        $("#id_data").datepicker();
-    });
-</script>
-
-
-<script>
-    $(function() {
-        // Configurando o Datepicker em português
-        $.datepicker.setDefaults($.datepicker.regional['pt-BR']);
-
-        // Configurando o formato de data brasileiro
-        $.datepicker.setDefaults({
-            dateFormat: 'dd/mm/yy',
-            dayNamesMin: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
-            monthNames: [
-                'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-                'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
-            ]
-        });
-
-        // Inicializando o Datepicker
-        $("#id_data").datepicker();
-    });
-</script>
 
 
 {% endblock %}
